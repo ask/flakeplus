@@ -18,6 +18,31 @@ Overview
 flakeplus detects some additional flakes, part of the release process
 for Celery, Kombu et.al.
 
+Flakes
+------
+
+- All files must import `absolute_import` from ``__future__``.
+- If Python 2.5 is a target, any file using the with statement
+  must also import that from ``__future__``.
+- Code cannot contain debugging print statements
+
+    A debugging print statement is any print
+    emitting a string that
+
+        - optionally starts with any sequence of non-alphanumeric chars
+        - an all-uppercase word followed by a colon,
+
+    Examples::
+
+        print("CONN: %r" % (connection, ))     # DEBUG!
+
+        print("The connection was lost")       # NOT DEBUG
+
+        print("> STUPID: %r" % (obj, ))        # DEBUG!
+
+        print(">>>>> OMFG: %r !!!!" % (obj, )) # definitely DEBUG!
+
+
 Example
 =======
 
