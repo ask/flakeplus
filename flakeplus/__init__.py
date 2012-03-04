@@ -4,6 +4,7 @@
 # :license: BSD, see LICENSE for more details.
 
 from __future__ import absolute_import
+from __future__ import with_statement
 
 VERSION = (1, 0, 0)
 __version__ = ".".join(map(str, VERSION[0:3])) + "".join(VERSION[3:])
@@ -15,12 +16,10 @@ __docformat__ = "restructuredtext"
 # -eof meta-
 
 import os
-import pprint
 import re
 import sys
 
 from collections import defaultdict
-from itertools import starmap
 from optparse import OptionParser, make_option as Option
 from unipath import Path
 
@@ -79,7 +78,7 @@ class FlakePP(object):
             self.announce(fmt, **dict(kwargs, filename=filename))
 
         for index, line in enumerate(self.strip_comments(fh)):
-            for key, pattern in self.steps:
+            for key, pattern in steps:
                 if pattern.match(line):
                     acc[key] = True
         if index:
@@ -135,7 +134,6 @@ class FlakePP(object):
     def announce(self, fmt, **kwargs):
         if not self.quiet:
             sys.stderr.write((fmt + "\n") % kwargs)
-
 
 
 class Command(object):
