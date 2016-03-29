@@ -33,9 +33,14 @@ RE_MULTILINE_COMMENT_E = r'(?:^|.+?)(?:\'\'\'|""")'
 RE_WITH = r'(?:^|\s+)with\s+'
 RE_WITH_IMPORT = r'''from\s+ __future__\s+ import\s+ with_statement'''
 RE_PRINT = r'''(?:^|\s+)print\((?:"|')(?:\W+?)?[A-Z0-9:]{2,}'''
-RE_ABS_IMPORT = r'''from\s+ __future__\s+ import\s+ absolute_import'''
+RE_ABS_IMPORT = r'''from\s+ __future__\s+ import\s+.*?absolute_import'''
+RE_UNI_IMPORT = r'''from\s+ __future__\s+ import.*?\s+unicode_literals'''
 
-acc = defaultdict(lambda: {"abs": False, "print": False})
+acc = defaultdict(lambda: {
+    "abs": False,
+    "print": False,
+    "uni": False,
+})
 
 __version__ = "1.0.0"
 
@@ -50,21 +55,31 @@ class FlakePP(object):
     re_ml_comment_s = compile(RE_MULTILINE_COMMENT_S)
     re_ml_comment_e = compile(RE_MULTILINE_COMMENT_E)
     re_abs_import = compile(RE_ABS_IMPORT)
+    re_uni_import = compile(RE_UNI_IMPORT)
     re_print = compile(RE_PRINT)
     re_with_import = compile(RE_WITH_IMPORT)
     re_with = compile(RE_WITH)
     re_noqa = compile(RE_NOQA)
-    map = {"abs": False, "print": False,
-           "with": False, "with-used": False}
+    map = {
+        "abs": False,
+        "print": False,
+        "with": False,
+        "with-used": False,
+        "uni": False,
+    }
 
-    def __init__(self, verbose=False, use_26=False, quiet=False):
+    def __init__(self, verbose=False, use_26=False, use_27=False, quiet=False):
         self.verbose = verbose  # XXX unused
         self.quiet = quiet
-        self.use_26 = use_26
-        self.steps = (("abs", self.re_abs_import),
-                      ("with", self.re_with_import),
-                      ("with-used", self.re_with),
-                      ("print", self.re_print))
+        self.use_26 = use_26 or use_27
+        self.use_27 = use_27
+        self.steps = (
+            ("abs", self.re_abs_import),
+            ("uni", self.re_uni_import),
+            ("with", self.re_with_import),
+            ("with-used", self.re_with),
+            ("print", self.re_print),
+        )
 
     def analyze_fh(self, fh):
         steps = self.steps
@@ -83,9 +98,11 @@ class FlakePP(object):
                     acc[key] = True
         if index:
             if not acc["abs"]:
-                error("%(filename)s: missing abs import")
+                error("%(filename)s: missing absloute_import import")
             if not self.use_26 and acc["with-used"] and not acc["with"]:
                 error("%(filename)s: missing with import")
+            if self.use_27 and not acc["uni"]:
+                error("%(filename)s: missing unicode_literals import")
             if acc["print"]:
                 error("%(filename)s: left over print statement")
 
@@ -155,6 +172,9 @@ class Command(object):
             Option("--2.6",
                    default=False, action="store_true", dest="use_26",
                    help="Specify support of Python 2.6 and up"),
+            Option("--2.7",
+                   default=False, action="store_true", dest="use_27",
+                   help="Specify support of Python 2.7 and up"),
             Option("--verbose", "-v",
                    default=False, action="store_true", dest="verbose",
                    help="Show more output."),
