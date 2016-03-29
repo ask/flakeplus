@@ -23,7 +23,13 @@ Flakes
 
 - All files must import `absolute_import` from ``__future__``.
 - If Python 2.5 is a target, any file using the with statement
-  must also import that from ``__future__``.
+  must also import that from ``__future__``
+
+    Disabled by options :option:`--2.6` and :option:`--2.7`).
+
+- If Python 2.7 is the target :option:`--2.7` then all files
+  must also import ``unicode_literals`` from ``__future__``.
+
 - Code cannot contain debugging print statements
 
     A debugging print statement is any print
@@ -34,13 +40,13 @@ Flakes
 
     Examples::
 
-        print("CONN: %r" % (connection, ))     # DEBUG!
+        print('CONN: %r' % (connection,))     # DEBUG!
 
-        print("The connection was lost")       # NOT DEBUG
+        print('The connection was lost')       # NOT DEBUG
 
-        print("> STUPID: %r" % (obj, ))        # DEBUG!
+        print('> STUPID: %r' % (obj,))        # DEBUG!
 
-        print(">>>>> OMFG: %r !!!!" % (obj, )) # definitely DEBUG!
+        print('>>>>> OMFG: %r !!!!' % (obj,)) # definitely DEBUG!
 
 
 Example
@@ -53,6 +59,10 @@ flakeplus is run from the commandline::
 If the target version is 2.6 and above, use the ``2.6`` switch::
 
     $ flakeplus --2.6 dir1 .. dirN
+
+If the target version is 2.7 and above, use the ``2.7`` switch::
+
+    $ flakeplus --2.7 dir1 .. dirN
 
 Installation
 ============
