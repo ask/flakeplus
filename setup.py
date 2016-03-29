@@ -6,7 +6,7 @@ import codecs
 import platform
 
 if sys.version_info < (2, 5):
-    raise Exception("Flakeplus requires Python 2.5 or higher.")
+    raise Exception('Flakeplus requires Python 2.5 or higher.')
 
 try:
     from setuptools import setup, find_packages
@@ -18,7 +18,7 @@ except ImportError:
     from setuptools import setup, find_packages           # noqa
     from setuptools.command.test import test              # noqa
 
-NAME = "flakeplus"
+NAME = 'flakeplus'
 entrypoints = {}
 extra = {}
 
@@ -55,18 +55,18 @@ def add_default(m):
 
 
 def add_version(m):
-    v = list(map(rq, m.groups()[0].split(", ")))
-    return (("VERSION", ".".join(v[0:3]) + "".join(v[3:])), )
+    v = list(map(rq, m.groups()[0].split(', ')))
+    return (('VERSION', '.'.join(v[0:3]) + ''.join(v[3:])), )
 
 
 def add_doc(m):
-    return (("doc", m.groups()[0]), )
+    return (('doc', m.groups()[0]), )
 
 pats = {re_meta: add_default,
         re_vers: add_version,
         re_doc: add_doc}
 here = os.path.abspath(os.path.dirname(__file__))
-meta_fh = open(os.path.join(here, "flakeplus/__init__.py"))
+meta_fh = open(os.path.join(here, 'flakeplus/__init__.py'))
 try:
     meta = {}
     for line in meta_fh:
@@ -81,24 +81,24 @@ finally:
 
 # -*- Installation Dependencies -*-
 
-install_requires = ["unipath"]
+install_requires = ['unipath']
 
 # -*- Tests Requires -*-
 
-tests_require = ["nose", "nose-cover3", "mock"]
+tests_require = ['nose', 'mock']
 if sys.version_info < (2, 7):
-    tests_require.append("unittest2")
+    tests_require.append('unittest2')
 
 # -*- Long Description -*-
 
-if os.path.exists("README.rst"):
-    long_description = codecs.open("README.rst", "r", "utf-8").read()
+if os.path.exists('README.rst'):
+    long_description = codecs.open('README.rst', 'r', 'utf-8').read()
 else:
-    long_description = "See http://pypi.python.org/pypi/flakeplus"
+    long_description = 'See http://pypi.python.org/pypi/flakeplus'
 
 # -*- Entry Points -*- #
 
-entrypoints["console_scripts"] = [
+entrypoints['console_scripts'] = [
         'flakeplus = flakeplus:main',
 ]
 
@@ -106,18 +106,18 @@ entrypoints["console_scripts"] = [
 
 setup(
     name=NAME,
-    version=meta["VERSION"],
-    description=meta["doc"],
-    author=meta["author"],
-    author_email=meta["contact"],
-    url=meta["homepage"],
-    platforms=["any"],
-    license="BSD",
+    version=meta['VERSION'],
+    description=meta['doc'],
+    author=meta['author'],
+    author_email=meta['contact'],
+    url=meta['homepage'],
+    platforms=['any'],
+    license='BSD',
     packages=find_packages(exclude=['ez_setup', 'tests', 'tests.*']),
     zip_safe=False,
     install_requires=install_requires,
     tests_require=tests_require,
-    test_suite="nose.collector",
+    test_suite='nose.collector',
     classifiers=classifiers,
     entry_points=entrypoints,
     long_description=long_description,

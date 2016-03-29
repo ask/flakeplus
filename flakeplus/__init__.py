@@ -7,11 +7,11 @@ from __future__ import absolute_import
 from __future__ import with_statement
 
 VERSION = (1, 0, 0)
-__version__ = ".".join(map(str, VERSION[0:3])) + "".join(VERSION[3:])
-__author__ = "Ask Solem"
-__contact__ = "ask@celeryproject.org"
-__homepage__ = "http://github.com/ask/flakeplus"
-__docformat__ = "restructuredtext"
+__version__ = '.'.join(map(str, VERSION[0:3])) + ''.join(VERSION[3:])
+__author__ = 'Ask Solem'
+__contact__ = 'ask@celeryproject.org'
+__homepage__ = 'http://github.com/ask/flakeplus'
+__docformat__ = 'restructuredtext'
 
 # -eof meta-
 
@@ -23,7 +23,7 @@ from collections import defaultdict
 from optparse import OptionParser, make_option as Option
 from unipath import Path
 
-EX_USAGE = getattr(os, "EX_USAGE", 0x40)
+EX_USAGE = getattr(os, 'EX_USAGE', 0x40)
 
 RE_COMMENT = r'^\s*\#'
 RE_NOQA = r'.+?\#\s+noqa+'
@@ -37,12 +37,10 @@ RE_ABS_IMPORT = r'''from\s+ __future__\s+ import\s+.*?absolute_import'''
 RE_UNI_IMPORT = r'''from\s+ __future__\s+ import.*?\s+unicode_literals'''
 
 acc = defaultdict(lambda: {
-    "abs": False,
-    "print": False,
-    "uni": False,
+    'abs': False,
+    'print': False,
+    'uni': False,
 })
-
-__version__ = "1.0.0"
 
 
 def compile(regex):
@@ -61,11 +59,11 @@ class FlakePP(object):
     re_with = compile(RE_WITH)
     re_noqa = compile(RE_NOQA)
     map = {
-        "abs": False,
-        "print": False,
-        "with": False,
-        "with-used": False,
-        "uni": False,
+        'abs': False,
+        'print': False,
+        'with': False,
+        'with-used': False,
+        'uni': False,
     }
 
     def __init__(self, verbose=False, use_26=False, use_27=False, quiet=False):
@@ -74,11 +72,11 @@ class FlakePP(object):
         self.use_26 = use_26 or use_27
         self.use_27 = use_27
         self.steps = (
-            ("abs", self.re_abs_import),
-            ("uni", self.re_uni_import),
-            ("with", self.re_with_import),
-            ("with-used", self.re_with),
-            ("print", self.re_print),
+            ('abs', self.re_abs_import),
+            ('uni', self.re_uni_import),
+            ('with', self.re_with_import),
+            ('with-used', self.re_with),
+            ('print', self.re_print),
         )
 
     def analyze_fh(self, fh):
@@ -97,14 +95,14 @@ class FlakePP(object):
                 if pattern.match(line):
                     acc[key] = True
         if index:
-            if not acc["abs"]:
-                error("%(filename)s: missing absloute_import import")
-            if not self.use_26 and acc["with-used"] and not acc["with"]:
-                error("%(filename)s: missing with import")
-            if self.use_27 and not acc["uni"]:
-                error("%(filename)s: missing unicode_literals import")
-            if acc["print"]:
-                error("%(filename)s: left over print statement")
+            if not acc['abs']:
+                error('%(filename)s: missing absloute_import import')
+            if not self.use_26 and acc['with-used'] and not acc['with']:
+                error('%(filename)s: missing with import')
+            if self.use_27 and not acc['uni']:
+                error('%(filename)s: missing unicode_literals import')
+            if acc['print']:
+                error('%(filename)s: left over print statement')
 
         return filename, errors[0], acc
 
@@ -115,7 +113,7 @@ class FlakePP(object):
     def analyze_tree(self, dir):
         for dirpath, _, filenames in os.walk(dir):
             for path in (Path(dirpath, f) for f in filenames):
-                if path.endswith(".py"):
+                if path.endswith('.py'):
                     yield self.analyze_file(path)
 
     def analyze(self, *paths):
@@ -150,7 +148,7 @@ class FlakePP(object):
 
     def announce(self, fmt, **kwargs):
         if not self.quiet:
-            sys.stderr.write((fmt + "\n") % kwargs)
+            sys.stderr.write((fmt + '\n') % kwargs)
 
 
 class Command(object):
@@ -169,26 +167,26 @@ class Command(object):
 
     def get_options(self):
         return (
-            Option("--2.6",
-                   default=False, action="store_true", dest="use_26",
-                   help="Specify support of Python 2.6 and up"),
-            Option("--2.7",
-                   default=False, action="store_true", dest="use_27",
-                   help="Specify support of Python 2.7 and up"),
-            Option("--verbose", "-v",
-                   default=False, action="store_true", dest="verbose",
-                   help="Show more output."),
-            Option("--quiet", "-q",
-                    default=False, action="store_true", dest="quiet",
-                    help="Don't show any output"),
+            Option('--2.6',
+                   default=False, action='store_true', dest='use_26',
+                   help='Specify support of Python 2.6 and up'),
+            Option('--2.7',
+                   default=False, action='store_true', dest='use_27',
+                   help='Specify support of Python 2.7 and up'),
+            Option('--verbose', '-v',
+                   default=False, action='store_true', dest='verbose',
+                   help='Show more output.'),
+            Option('--quiet', '-q',
+                   default=False, action='store_true', dest='quiet',
+                   help='Silence output'),
         )
 
     def usage(self):
-        return "%%prog [options] %s" % (self.args, )
+        return '%%prog [options] %s' % (self.args, )
 
     def die(self, msg):
         self.usage()
-        sys.stderr.write("%s\n" % msg)
+        sys.stderr.write('%s\n' % msg)
         return EX_USAGE
 
     def expanduser(self, value):
@@ -199,11 +197,11 @@ class Command(object):
     def handle_argv(self, prog_name, argv):
         options, args = self.parse_options(prog_name, argv)
         options = dict((k, self.expanduser(v))
-                            for k, v in vars(options).iteritems()
-                                if not k.startswith("_"))
+                       for k, v in vars(options).iteritems()
+                       if not k.startswith('_'))
         argv = map(self.expanduser, argv)
         if not argv:
-            return self.die("No input files/directories")
+            return self.die('No input files/directories')
         return self.run(*args, **options)
 
     def parse_options(self, prog_name, argv):
@@ -224,5 +222,5 @@ def main(argv=sys.argv):
     sys.exit(Command().execute_from_commandline(argv))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
